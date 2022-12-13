@@ -1,4 +1,6 @@
 int
+
+/* e */
 float
 bool
 char
@@ -20,7 +22,8 @@ for
 { 
 } 
 + 
-- 
+-
+
 * 
 / 
 % 
@@ -38,6 +41,11 @@ for
 ||
 
 
+true
+false
+'a'
+'+'
+','
 
-
+//teste2
 
