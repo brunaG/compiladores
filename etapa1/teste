@@ -39,6 +39,8 @@ for
 &&
 ||
 
+/* asdasdasd
+.*asd**/
 
 true
 false
@@ -53,5 +55,6 @@ e-68
 
 /* asdasdasd
 .*asd**/
+
 256
 .asda

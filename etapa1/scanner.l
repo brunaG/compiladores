@@ -4,10 +4,11 @@
 int num_lines = 1;
 %}
 
+%x COMMENT
 %option noyywrap
 
 
-newLine \n
+
 white [ \t\r]+
 digit [0-9]
 integer [-+]?{digit}+
@@ -19,7 +20,7 @@ identifier [_]?({digit}|{letter})*
 specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!]
 
 %%
-{newLine} ++num_lines;
+
 {integer} { return TK_LIT_INT; }
 {float} { return TK_LIT_FLOAT; }
 "false" { return TK_LIT_FALSE;}
@@ -52,8 +53,13 @@ specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!]
 "&&" { return TK_OC_AND;}
 "||" { return TK_OC_OR;}
 
-"//".*                                    { /* DO NOTHING */ } /* ignores one-line comments*/
-"/*"[^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }/* ignores multiple-line comments */
+\n              { num_lines++;}
+
+"//".*
+"/*"			{ BEGIN(COMMENT); }
+<COMMENT>\n		{ num_lines++; }
+<COMMENT>.
+<COMMENT>"*/"	{ BEGIN(INITIAL); }
 
 {identifier} {return TK_IDENTIFICADOR;}
 
