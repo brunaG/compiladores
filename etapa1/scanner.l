@@ -6,11 +6,12 @@ int num_lines = 1;
 
 %option noyywrap
 
+
 newLine \n
-white [ \t]+
+white [ \t\r]+
 digit [0-9]
 integer [-+]?{digit}+
-float ({integer}"."{digit}*)|((e|E){integer})
+float ({integer}"."{digit}+)|((e|E){integer})
 letter [a-z|A-Z]
 identifier [_]?({digit}|{letter})*
 
@@ -23,8 +24,7 @@ specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!]
 {float} { return TK_LIT_FLOAT; }
 "false" { return TK_LIT_FALSE;}
 "true" { return TK_LIT_TRUE;}
-\'([^\\\']|\\.)\' {return TK_LIT_CHAR;}
-
+\'[^']\' {return TK_LIT_CHAR;}
 
 
 "int" {return TK_PR_INT;}
@@ -52,11 +52,12 @@ specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!]
 "&&" { return TK_OC_AND;}
 "||" { return TK_OC_OR;}
 
-"//".*                                    { /* DO NOTHING */ } // ignores one-line comments
-[/*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }/* ignores multiple-line comments */
+"//".*                                    { /* DO NOTHING */ } /* ignores one-line comments*/
+"/*"[^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }/* ignores multiple-line comments */
 
 {identifier} {return TK_IDENTIFICADOR;}
 
+. {return TK_ERRO;}
 
 %%
 
