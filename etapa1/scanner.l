@@ -12,9 +12,9 @@ int num_lines = 1;
 white [ \t\r]+
 digit [0-9]
 integer [-+]?{digit}+
-float ({integer}"."{digit}+)|((e|E){integer})
+float ({integer}"."{digit}+)((e|E){integer})?
 letter [a-z|A-Z]
-identifier [_]?({digit}|{letter})*
+identifier {letter}+
 
 
 specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!]
