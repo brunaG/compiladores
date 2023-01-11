@@ -91,6 +91,9 @@ functionCall
 
 returnCommand: TK_PR_RETURN expression';'
 
+expressionList: ',' expression expressionList | ;
+
+expression: ;
 
 %%
 
