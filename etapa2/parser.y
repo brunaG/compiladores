@@ -67,8 +67,8 @@ command
 	| attribution ';'
 	| functionCall ';'
 	| returnCommand ';'
-	| fluxControl
-	| repetition
+	| fluxControl ';'
+	| repetition ';'
 	;
 
 commandList: command commandList | ;
@@ -95,8 +95,8 @@ expressionList: ',' expression expressionList | ;
 
 expression: unary operando | mathExpression;
 mathExpression: expression operador operando | '(' expression operador operando ')';
-operador: '+' | '-' | '/' | '*' | '%' | '<' | '>' | TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE |
- TK_OC_AND | TK_OC_OR ;  //problema com + e - seguidos de numeros
+operador:  '-' | '/' | '*' | '%' | '<' | '>' | TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE |
+ TK_OC_AND | TK_OC_OR | '+';  //problema com + e - seguidos de numeros
 unary: '-' | '!' | ;
 operando: identifier multoArray | literalTypes | functionCall ;
 

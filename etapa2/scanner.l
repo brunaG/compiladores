@@ -1,3 +1,4 @@
+/* Bruna dos Santos Gonzaga - 00252743*/
 /*Gabriel Tamusiunas Schumacker - 285648*/
 
 %{
@@ -14,7 +15,7 @@ int num_lines = 1;
 
 white [ \t\r]+
 digit [0-9]
-integer [-+]?{digit}+
+integer {digit}+
 float ({integer}"."{digit}+)((e|E){integer})?
 letter [a-z|A-Z]
 identifier {letter}+
