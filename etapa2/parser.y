@@ -1,5 +1,5 @@
 // Bruna dos Santos Gonzaga - 00252743
-// nome - matricula
+// Gabriel Tamusiunas Schumacker - 00285648
 
 %{
 #include "stdio.h"
@@ -43,7 +43,7 @@ int get_line_number();
 
 %%
 
-program: globalVar program
+program: globalVar program |
          function program
          | ;
 
@@ -53,7 +53,7 @@ literalTypes: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE | TK_LIT_CH
 identifier: TK_IDENTIFICADOR;
 
 globalVar: types identifier multoArray varList ';' ;
-multoArray: '[' TK_LIT_INT multoArrayList ']' | ; //PROBLEMA com arranjo multidimensional
+multoArray: '[' TK_LIT_INT multoArrayList ']' | ; 
 multoArrayList: multoArrayList '^' TK_LIT_INT | ;
 varList: varList ',' identifier multoArray | ;
 
@@ -67,8 +67,8 @@ command
 	| attribution ';'
 	| functionCall ';'
 	| returnCommand ';'
-	//| fluxControll ';'
-	| commandBlock ';'
+	| fluxControl
+	| repetition
 	;
 
 commandList: command commandList | ;
@@ -85,24 +85,25 @@ attribution:
 	  identifier '=' expression
 	| identifier '['expression']' '=' expression;
 
-functionCall:
-    identifier '('expression expressionList')'
+functionCall
+    : identifier '('expression expressionList')'
     | identifier '('')'
 
 returnCommand: TK_PR_RETURN expression';'
 
-ifExpression:TK_PR_IF '(' expression ')' commandBlock;
-
-fluxControll:
-        ifExpression
-	    | ifExpression TK_PR_ELSE commandBlock;
-
-iteration: TK_PR_WHILE '(' expression ')' commandBlock;
-
 expressionList: ',' expression expressionList | ;
 
-expression: ;
+expression: unary operando | mathExpression;
+mathExpression: expression operador operando | '(' expression operador operando ')';
+operador: '+' | '-' | '/' | '*' | '%' | '<' | '>' | TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE |
+ TK_OC_AND | TK_OC_OR ;  //problema com + e - seguidos de numeros
+unary: '-' | '!' | ;
+operando: identifier multoArray | literalTypes | functionCall ;
 
+fluxControl: TK_PR_IF '(' expression ')' TK_PR_THEN commandBlock else ;
+else: TK_PR_ELSE commandBlock | ;
+
+repetition: TK_PR_WHILE '(' expression ')' commandBlock;
 %%
 
 void yyerror (char const *s){

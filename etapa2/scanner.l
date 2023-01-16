@@ -1,3 +1,4 @@
+/*Gabriel Tamusiunas Schumacker - 285648*/
 
 %{
 #include <stdio.h>
@@ -19,7 +20,7 @@ letter [a-z|A-Z]
 identifier {letter}+
 
 
-specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!]
+specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!|\[|\]|/]
 
 %%
 
