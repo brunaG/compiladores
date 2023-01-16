@@ -65,10 +65,10 @@ parameterList: ',' types identifier parameterList | ;
 command
 	: variableDeclaration ';'
 	| attribution ';'
-	//| functionCall ';'
-	//| returnCommand ';'
+	| functionCall ';'
+	| returnCommand ';'
 	//| fluxControll ';'
-	//| commandBlock ';'
+	| commandBlock ';'
 	;
 
 commandList: command commandList | ;
@@ -85,11 +85,19 @@ attribution:
 	  identifier '=' expression
 	| identifier '['expression']' '=' expression;
 
-functionCall
-    : identifier '('expression expressionList')'
+functionCall:
+    identifier '('expression expressionList')'
     | identifier '('')'
 
 returnCommand: TK_PR_RETURN expression';'
+
+ifExpression:TK_PR_IF '(' expression ')' commandBlock;
+
+fluxControll:
+        ifExpression
+	    | ifExpression TK_PR_ELSE commandBlock;
+
+iteration: TK_PR_WHILE '(' expression ')' commandBlock;
 
 expressionList: ',' expression expressionList | ;
 
