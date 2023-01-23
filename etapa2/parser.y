@@ -58,7 +58,7 @@ multoArrayList: multoArrayList '^' TK_LIT_INT | ;
 varList: varList ',' identifier multoArray | ;
 
 function: functionHeader commandBlock;
-functionHeader: identifier '(' parameter parameterList ')';
+functionHeader: types identifier '(' parameter parameterList ')';
 parameter: types identifier | ;
 parameterList: ',' types identifier parameterList | ;
 
@@ -67,8 +67,10 @@ command
 	| attribution ';'
 	| functionCall ';'
 	| returnCommand ';'
-	| fluxControl ';'
-	| repetition ';'
+	| fluxControl
+	| commandBlock ';'
+	| repetition
+	| returnCommand
 	;
 
 commandList: command commandList | ;
@@ -95,8 +97,8 @@ expressionList: ',' expression expressionList | ;
 
 expression: unary operando | mathExpression;
 mathExpression: expression operador operando | '(' expression operador operando ')';
-operador:  '-' | '/' | '*' | '%' | '<' | '>' | TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE |
- TK_OC_AND | TK_OC_OR | '+';  //problema com + e - seguidos de numeros
+operador: '+' | '-' | '/' | '*' | '%' | '<' | '>' | TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE |
+ TK_OC_AND | TK_OC_OR ;
 unary: '-' | '!' | ;
 operando: identifier multoArray | literalTypes | functionCall ;
 

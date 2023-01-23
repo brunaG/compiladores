@@ -1,0 +1,25 @@
+• No relatório de erros dos testes, estranhamento, o erro esperado é sempre o mesmo. É reflexo de uma gramática com problemas.
+
+• Nenhuma regra de precedência foi implementada. Sugiro revisitar as regras de expressões aritméticas para empregar a precedência
+
+• Evitar NT que derivam para vazio, como em CommandList.
+
+• Usar recursão à esquerda em program.
+
+ainda com erro: 
+
+asl003 
+asl016 
+asl017 
+asl019 
+asl037 
+asl071
+asl083
+asl084 
+asl086 
+asl089 
+asl090 
+asl091 
+asl092 
+asl118 
+asl132
