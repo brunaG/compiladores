@@ -41,10 +41,19 @@ int get_line_number();
 %token TK_IDENTIFICADOR
 %token TK_ERRO
 
+
+%left '<' '>' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE
+%left TK_OC_OR
+%left TK_OC_AND
+%left '+' '-'
+%left '*' '/' '%' 
+%right '!'
+
+
 %%
 
-program: globalVar program |
-         function program
+program: program globalVar  |
+         program function 
          | ;
 
 types: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR;
@@ -67,9 +76,9 @@ command
 	| attribution ';'
 	| functionCall ';'
 	| returnCommand ';'
-	| fluxControl
+	| fluxControl ';'
 	| commandBlock ';'
-	| repetition
+	| repetition ';'
 	| returnCommand
 	;
 
