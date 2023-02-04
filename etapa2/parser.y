@@ -41,10 +41,19 @@ int get_line_number();
 %token TK_IDENTIFICADOR
 %token TK_ERRO
 
+
+%left '<' '>' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE
+%left TK_OC_OR
+%left TK_OC_AND
+%left '+' '-'
+%left '*' '/' '%' 
+%right '!'
+
+
 %%
 
-program: globalVar program |
-         function program
+program: program globalVar  |
+         program function 
          | ;
 
 types: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR;
@@ -53,8 +62,8 @@ literalTypes: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE | TK_LIT_CH
 identifier: TK_IDENTIFICADOR;
 
 globalVar: types identifier multoArray varList ';' ;
-multoArray: '[' TK_LIT_INT multoArrayList ']' | ; 
-multoArrayList: multoArrayList '^' TK_LIT_INT | ;
+multoArray: '[' expression multoArrayList ']' | ; 
+multoArrayList: multoArrayList '^' expression | ;
 varList: varList ',' identifier multoArray | ;
 
 function: functionHeader commandBlock;
@@ -67,9 +76,9 @@ command
 	| attribution ';'
 	| functionCall ';'
 	| returnCommand ';'
-	| fluxControl
+	| fluxControl ';'
 	| commandBlock ';'
-	| repetition
+	| repetition ';'
 	| returnCommand
 	;
 
@@ -84,8 +93,8 @@ localVariableList: ','  localVariable localVariableList | ;
 variableDeclaration: types localVariable localVariableList;
 
 attribution:
-	  identifier '=' expression
-	| identifier '['expression']' '=' expression;
+	  identifier multoArray '=' expression
+	
 
 functionCall
     : identifier '('expression expressionList')'
@@ -95,8 +104,8 @@ returnCommand: TK_PR_RETURN expression';'
 
 expressionList: ',' expression expressionList | ;
 
-expression: unary operando | mathExpression;
-mathExpression: expression operador operando | '(' expression operador operando ')';
+expression: unary operando | mathExpression | '(' mathExpression ')';
+mathExpression: expression operador operando;
 operador: '+' | '-' | '/' | '*' | '%' | '<' | '>' | TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE |
  TK_OC_AND | TK_OC_OR ;
 unary: '-' | '!' | ;

@@ -18,7 +18,7 @@ white [ \t\r]+
 digit [0-9]
 integer {digit}+
 float ({integer}"."{digit}+)((e|E){integer})?
-letter [a-z|A-Z]
+letter [a-zA-Z]
 identifier {letter}+
 
 
