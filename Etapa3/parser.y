@@ -4,6 +4,8 @@
 %{
 #include "stdio.h"
 #include "stdlib.h"
+#include<string.h>
+#include "ast.h"
 
 int yylex(void);
 void yyerror (char const *s);
@@ -19,33 +21,37 @@ int get_line_number();
    valorLexico valor_lexico;
 }
 
-%type<no> program
-%type<no> types
-%type<no> literalTypes
-%type<no> identifier
-%type<no> globalVar
-%type<no> multoArray
-%type<no> multoArrayList
-%type<no> varList
-%type<no> functionHeader
-%type<no> parameter
-%type<no> parameterList
-%type<no> command
-%type<no> commandList
-%type<no> commandBlock
-%type<no> localVariable
-%type<no> localVariableList
-%type<no> variableDeclaration
-%type<no> attribution
-%type<no> functionCall
-%type<no> returnCommand
-%type<no> expressionList
-%type<no> operador
-%type<no> unary
-%type<no> operando
-%type<no> fluxControl
-%type<no> else
-%type<no> repetition
+%type<node> program
+%type<node> types
+%type<node> literalTypes
+%type<node> identifier
+%type<node> globalVar
+%type<node> multoArray
+%type<node> multoArrayList
+%type<node> varList
+%type<node> functionHeader
+%type<node> function
+%type<node> parameter
+%type<node> parameterList
+%type<node> command
+%type<nnodeo> commandList
+%type<node> commandBlock
+%type<node> localVariable
+%type<node> localVariableList
+%type<node> variableDeclaration
+%type<node> attribution
+%type<node> functionCall
+%type<node> returnCommand
+%type<node> expression
+%type<node> expressionList
+%type<node> operador
+%type<node> unary
+%type<node> operando
+%type<node> fluxControl
+%type<node> else
+%type<node> repetition
+%type<node> mathExpression
+
 
 %token<valor_lexico> TK_PR_INT
 %token<valor_lexico> TK_PR_FLOAT
@@ -91,10 +97,12 @@ program: program globalVar
 types: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR;
 literalTypes: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE | TK_LIT_CHAR;
 
-identifier: TK_IDENTIFICADOR
+identifier: TK_IDENTIFICADOR;
 
 globalVar: types identifier multoArray varList ';' ;
-multoArray: '[' expression multoArrayList ']' | ; 
+
+multoArray: '[' expression multoArrayList ']' | ;
+
 multoArrayList: multoArrayList '^' expression | ;
 varList: varList ',' identifier multoArray | ;
 
@@ -103,6 +111,7 @@ function: functionHeader commandBlock
        add_child $1, $2);
        $$ = $1;
     };
+
 functionHeader: types identifier '(' parameter parameterList ')' { $$ = add_node($2); };
 
 parameter: types identifier | ;
@@ -149,14 +158,14 @@ returnCommand: TK_PR_RETURN expression';'
                      Node *newNode = addNodeLabel("return");
                      add_child(newNode, $2);
                      $$ = newNode;
-                }
+                };
 
 
 expressionList: ',' expression expressionList | ;
 
 expression: unary operando          { $$ = $1; }
           | mathExpression          { $$ = $1; }
-          | '(' mathExpression ')' { $$ = $1; };
+          | '(' mathExpression ')'  { $$ = $1; };
 
 mathExpression: expression operador operando;
 
