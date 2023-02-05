@@ -15,8 +15,8 @@ int get_line_number();
 %define parse.error verbose
 
 %union {
-   node_t *no;
-   valor_t *valor_lexico;
+   Node *node;
+   valorLexico valor_lexico;
 }
 
 %type<no> program
@@ -84,38 +84,50 @@ int get_line_number();
 
 %%
 
-program: program globalVar  |
-         program function 
-         | ;
+program: program globalVar
+       | program function
+       | ;
 
 types: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR;
 literalTypes: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE | TK_LIT_CHAR;
 
-identifier: TK_IDENTIFICADOR { $$ = create_node_from_token(identifier, $1);};
+identifier: TK_IDENTIFICADOR
 
 globalVar: types identifier multoArray varList ';' ;
 multoArray: '[' expression multoArrayList ']' | ; 
 multoArrayList: multoArrayList '^' expression | ;
 varList: varList ',' identifier multoArray | ;
 
-function: functionHeader commandBlock;
-functionHeader: types identifier '(' parameter parameterList ')';
+function: functionHeader commandBlock
+    {
+       add_child $1, $2);
+       $$ = $1;
+    };
+functionHeader: types identifier '(' parameter parameterList ')' { $$ = add_node($2); };
+
 parameter: types identifier | ;
+
 parameterList: ',' types identifier parameterList | ;
 
 command
-	: variableDeclaration ';'
-	| attribution ';'
-	| functionCall ';'
-	| returnCommand ';'
-	| fluxControl ';'
-	| commandBlock ';'
-	| repetition ';'
-	| returnCommand
+	: variableDeclaration ';' { $$ = $1;}
+	| attribution ';'         { $$ = $1;}
+	| functionCall ';'        { $$ = $1;}
+	| returnCommand ';'       { $$ = $1;}
+	| fluxControl ';'         { $$ = $1;}
+	| commandBlock ';'        { $$ = $1;}
+	| repetition ';'          { $$ = $1;}
+	| returnCommand           { $$ = $1;}
 	;
 
-commandList: command commandList | ;
-commandBlock: '{' commandList '}';
+commandList: command commandList
+            {
+                if($1==NULL) $$ = $2;
+                else { add_child($1, $2); $$ = $1; }
+            }
+             | { $$ = NULL; };
+
+commandBlock: '{' commandList '}' { $$ = $2; } ;
 
 localVariable:
       identifier
@@ -133,14 +145,40 @@ functionCall
     | identifier '('')'
 
 returnCommand: TK_PR_RETURN expression';'
+                {
+                     Node *newNode = addNodeLabel("return");
+                     add_child(newNode, $2);
+                     $$ = newNode;
+                }
+
 
 expressionList: ',' expression expressionList | ;
 
-expression: unary operando | mathExpression | '(' mathExpression ')';
+expression: unary operando          { $$ = $1; }
+          | mathExpression          { $$ = $1; }
+          | '(' mathExpression ')' { $$ = $1; };
+
 mathExpression: expression operador operando;
-operador: '+' | '-' | '/' | '*' | '%' | '<' | '>' | TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE |
- TK_OC_AND | TK_OC_OR ;
-unary: '-' | '!' | ;
+
+operador: '+'       { $$ = add_node($1); }
+        | '-'       { $$ = add_node($1); }
+        | '*'       { $$ = add_node($1); }
+        | '%'       { $$ = add_node($1); }
+        | '<'       { $$ = add_node($1); }
+        | '>'       { $$ = add_node($1); }
+        | TK_OC_LE  { $$ = add_node($1); }
+        | TK_OC_GE  { $$ = add_node($1); }
+        | TK_OC_EQ  { $$ = add_node($1); }
+        | TK_OC_NE  { $$ = add_node($1); }
+        | TK_OC_AND { $$ = add_node($1); }
+        | TK_OC_OR  { $$ = add_node($1); }
+        ;
+
+unary: '-' { $$ = add_node($1); }
+      |'!' { $$ = add_node($1); }
+      |
+        ;
+
 operando: identifier multoArray | literalTypes | functionCall ;
 
 fluxControl: TK_PR_IF '(' expression ')' TK_PR_THEN commandBlock else ;
