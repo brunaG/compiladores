@@ -26,11 +26,13 @@ specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!|\[|\]|/]
 
 %%
 
-{integer} { return TK_LIT_INT; }
-{float} { return TK_LIT_FLOAT; }
-"false" { return TK_LIT_FALSE;}
-"true" { return TK_LIT_TRUE;}
-\'[^']\' {return TK_LIT_CHAR;}
+{integer} { {yylval.valor_lexico = }; return TK_LIT_INT; }
+{float} { {yylval.valor_lexico = }; return TK_LIT_FLOAT; }
+
+"false" { {yylval.valor_lexico = }; return TK_LIT_FALSE;}
+"true" { {yylval.valor_lexico = }; return TK_LIT_TRUE;}
+
+\'[^']\' { {yylval.valor_lexico = }; return TK_LIT_CHAR;}
 
 
 "int" {return TK_PR_INT;}
@@ -51,12 +53,12 @@ specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!|\[|\]|/]
 {white}	 {/* DO NOTHING */}    /* eats up whitespace */
 
 {specialCharacter} {return (int)*yytext;}
-"<=" { return TK_OC_LE;}
-">=" { return TK_OC_GE;}
-"==" { return TK_OC_EQ;}
-"!=" { return TK_OC_NE;}
-"&&" { return TK_OC_AND;}
-"||" { return TK_OC_OR;}
+"<=" { {yylval.valor_lexico = }; return TK_OC_LE;}
+">=" { {yylval.valor_lexico = }; return TK_OC_GE;}
+"==" { {yylval.valor_lexico = }; return TK_OC_EQ;}
+"!=" { {yylval.valor_lexico = }; return TK_OC_NE;}
+"&&" { {yylval.valor_lexico = }; return TK_OC_AND;}
+"||" { {yylval.valor_lexico = }; return TK_OC_OR;}
 
 \n              { num_lines++;}
 
@@ -66,7 +68,7 @@ specialCharacter [,|;|:|\(|\)|\{|\}|\+|\-|\*||%|\^|<|>|=|!|\[|\]|/]
 <COMMENT>.
 <COMMENT>"*/"	{ BEGIN(INITIAL); }
 
-{identifier} {return TK_IDENTIFICADOR;}
+{identifier} { {yylval.valor_lexico = }; return TK_IDENTIFICADOR;}
 
 . {return TK_ERRO;}
 
