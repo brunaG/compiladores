@@ -15,8 +15,6 @@ Node *add_node(valorLexico valor_lexico)
     return node;
 }
 
-add_child
-
 void add_child(Node *node, Node *child)
 {
     if(node!= NULL && child!=NULL)
