@@ -1,0 +1,7 @@
+w70 line 3: syntax error, unexpected TKOCLE, expecting ; or , or =
+
+int f()
+{
+  int b <= 10;
+  int a <= 30;
+}

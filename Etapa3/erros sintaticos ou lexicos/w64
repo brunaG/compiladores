@@ -1,0 +1,7 @@
+w64 line 2: syntax error, unexpected TKOCLE, expecting ; or , or =
+
+w64 line 2: syntax error, unexpected TKOCLE, expecting ; or , or =
+
+int f(){
+    char a <= 'A';
+}

@@ -1,0 +1,9 @@
+w62 line 6: syntax error, unexpected (
+
+int f(){
+    int a;
+    int b;
+    int c;
+    int d;
+    a = b * (c * d);
+}

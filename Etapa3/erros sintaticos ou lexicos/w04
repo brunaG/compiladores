@@ -1,0 +1,6 @@
+w04 line 2: syntax error, unexpected TKOCLE, expecting ; or , or =
+
+
+int f(){
+    int a <= 0;
+}

@@ -1,0 +1,6 @@
+w16 line 3: syntax error, unexpected !
+
+int f()
+{
+  z = a && b || c == !d || e && f;
+}

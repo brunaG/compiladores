@@ -1,0 +1,9 @@
+w72 line 6: syntax error, unexpected /
+
+int f()
+{
+  int a;
+  int b;
+  int c;
+  a = 2*c+a/b;
+}
