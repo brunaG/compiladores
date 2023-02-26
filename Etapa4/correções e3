@@ -1,0 +1,40 @@
+1.1.12 GrupoM
+
+• Arquivos não estavam na raiz do TAR
+
+• O programa detecta erro sintático em várias entradas (w04, w08, etc, w39, . . . ) embora todas as entradas estão sintatica- mente válidas conforme a E2. O operador binário ’/’ não é reconhecido!!!
+
+• Por alguma razão misteriosa, são exportadas duas conexões entre cada nó da AST, conforme podemos ver nas árvores geradas (veja os arquivos específicos fornecidos). Isso faz com que o teste falhe (w05 e outras). Ao revisar minuciosamente a saída, é como se subárvores estivessem sendo exportadas duas vezes. O código de export parece estar okay, eu olharia para o lado da montagem da AST no parser.y, onde talvez esteja se adicionando o mesmo filho duas vezes. Mas talvez seja outra coisa ainda. Para resolver esta situação e poder avaliar a AST (ainda com o export ruim), o professor remove as repetições da saída do programa.
+
+• Problemasdeimplementaçãodaprecedênciadeoperadores(w16,w37,w78,...),podemosverclaramentequeagramática não implementa isso (conforme era solicitado na E2). Veja o NT mathExpression.
+
+• A árvore dos índices de arranjos multidimensional está equivocada (w21 e outros)
+
+• Ao gerar o export, algumas conexões são impressas como "(nil)" (w74)
+
+
+
+
+------ Erros sintáticos ou léxicos ------
+
+w04 line 2: syntax error, unexpected TKOCLE, expecting ; or , or =
+w08 line 2: syntax error, unexpected TKOCLE, expecting ; or , or =
+w11 line 2: syntax error, unexpected /
+w16 line 3: syntax error, unexpected !
+w39 line 8: syntax error, unexpected /
+w62 line 6: syntax error, unexpected (
+w64 line 2: syntax error, unexpected TKOCLE, expecting ; or , or =
+w65 line 19: syntax error, unexpected /
+w66 line 21: syntax error, unexpected /
+w67 line 19: syntax error, unexpected /
+w70 line 3: syntax error, unexpected TKOCLE, expecting ; or , or =
+w72 line 6: syntax error, unexpected /
+
+
+-------- Erros de falha de segmentação --------
+
+
+-------- Erros de geração de árvore errada --------
+ w01  w03  w07  w09  w10  w12  w15  w21  w26  w29  w30  w37  w41  w68  w69  w74  w76  w78
+
+ 
