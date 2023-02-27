@@ -1,3 +1,6 @@
+// Bruna dos Santos Gonzaga - 00252743
+// Gabriel Tamusiunas Schumacker - 00285648
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

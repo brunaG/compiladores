@@ -262,6 +262,7 @@ expression: unary operando {
 		            	$$ = $2;
 		            }}
           | mathExpression          { $$ = $1; }
+          | unary
           | '(' mathExpression ')'  { $$ = $2; };
 
 mathExpression: expression operador operando {add_child($2, $1);
@@ -270,6 +271,7 @@ mathExpression: expression operador operando {add_child($2, $1);
 
 operador: '+'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
         | '-'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
+        | '/'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
         | '*'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
         | '%'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
         | '<'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
@@ -294,7 +296,7 @@ operando: identifier multoArray
                      $$ = $1;
                   	
                   }
-} 
+}
 	| literalTypes {$$ = $1;}
 	| functionCall {$$ = $1;};
 
