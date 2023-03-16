@@ -6,6 +6,7 @@
 #include "stdlib.h"
 #include <string.h>
 #include "ast.h"
+#include "tabela.h"
 
 int yylex(void);
 void yyerror (char const *s);
@@ -19,15 +20,20 @@ int get_line_number();
 %define parse.lac full
 %define parse.error verbose
 
+%code requires {
+    #include "ast.h"
+    #include "tabela.h"
+}
+
 %union {
    struct Node* node;
    struct ValorLexico valor_lexico;
    char* text;
+   TipoSimbolo symbolType;
 }
 
 %type<node> programstart
 %type<node> program
-%type<node> types
 %type<node> literalTypes
 %type<node> identifier
 %type<node> globalVar
@@ -49,14 +55,15 @@ int get_line_number();
 %type<node> returnCommand
 %type<node> expression
 %type<node> expressionList
-%type<node> operador
-%type<node> unary
-%type<node> operando
+%type<node> unario
 %type<node> fluxControl
 %type<node> else
 %type<node> repetition
-%type<node> mathExpression
+%type<node> operadorUnario
+%type<node> operadorBinario
+%type<node> binario
 
+%type<symbolType> types
 
 %token<valor_lexico> TK_PR_INT
 %token<valor_lexico> TK_PR_FLOAT
@@ -90,7 +97,12 @@ int get_line_number();
 %left TK_OC_AND
 %left '+' '-'
 %left '*' '/' '%' 
-%right '!'
+%left '!'
+%right '[' ']'
+%right '(' ')'
+
+%left UNARY_OP
+%left BINARY_OP
 
 
 %%
@@ -186,7 +198,7 @@ commandBlock: '{' commandList '}' { $$ = $2; } ;
 
 localVariable:
       identifier {$$ =NULL;}
-    | identifier '=' literalTypes {
+    | identifier TK_OC_LE literalTypes {
    	Node *newNode = create_node(yylval.valor_lexico,1,yylval.text);	
 	add_child(newNode,$1);
 	add_child(newNode,$3);
@@ -254,51 +266,38 @@ expressionList: ',' expression expressionList {add_child($2,$3);
 					       $$ = $2;}
 		    | {$$ = NULL;};
 
-expression: unary operando {
-			    if($1 != NULL){
-				add_child($1, $2);
-		                $$ = $1;
-		            }else{
-		            	$$ = $2;
-		            }}
-          | mathExpression          { $$ = $1; }
-          | unary
-          | '(' mathExpression ')'  { $$ = $2; };
 
-mathExpression: expression operador operando {add_child($2, $1);
-				              add_child($2, $3);
-				              $$ = $2;};
+expression: identifier multoArray
+	        | literalTypes {$$ = $1;}
+	        | functionCall {$$ = $1;};
+	        | unario {$$ = $1;};
+	        | binario   {$$ = $1;};
+	        | '(' expression ')'   { $$ = $2; };
+	        ;
 
-operador: '+'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
-        | '-'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
-        | '/'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
-        | '*'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
-        | '%'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
-        | '<'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
-        | '>'       { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
-        | TK_OC_LE  { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
-        | TK_OC_GE  { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
-        | TK_OC_EQ  { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
-        | TK_OC_NE  { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
-        | TK_OC_AND { $$ = create_node(yylval.valor_lexico,11,yylval.text); }
-        | TK_OC_OR  { $$ = create_node(yylval.valor_lexico,10,yylval.text); }
-        ;
+unario: operadorUnario expression %prec  UNARY_OP
 
-unary: '-' { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
-      |'!' { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
-      | {$$= NULL;};
 
-operando: identifier multoArray 
-{             	  if($2 !=NULL){   
-                     add_child($2, $1);
-                     $$ = $2;
-                  }else{
-                     $$ = $1;
-                  	
-                  }
-}
-	| literalTypes {$$ = $1;}
-	| functionCall {$$ = $1;};
+operadorUnario: '-' { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
+               |'!' { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
+               | {$$= NULL;};
+
+operadorBinario: '+'            { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
+               | '-'            { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
+               | '*'            { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
+               | '/'            { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
+               | '%'            { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
+               | '<'            { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
+               | '>'            { $$ = create_node(yylval.valor_lexico,9,yylval.text); }
+               | TK_OC_EQ       { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
+               | TK_OC_LE       { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
+               | TK_OC_GE       { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
+               | TK_OC_NE       { $$ = create_node(yylval.valor_lexico,0,yylval.text); }
+               | TK_OC_AND      { $$ = create_node(yylval.valor_lexico,10,yylval.text); }
+               | TK_OC_OR       { $$ = create_node(yylval.valor_lexico,11,yylval.text); }
+               ;
+
+binario: expression operadorBinario expression %prec BINARY_OP;
 
 fluxControl: TK_PR_IF '(' expression ')' TK_PR_THEN commandBlock else 
 {
